@@ -26,13 +26,28 @@ function PdfRoot({ children }: { children: ReactNode }) {
   return <View>{stripWhitespaceNodes(children)}</View>
 }
 
+function Heading({ children, depth = 1 }: { children: ReactNode; depth?: number }) {
+  const fontSize = 24 - (depth - 1) * 2
+  return <Text style={{ fontSize, fontWeight: 'bold' }}>{children}</Text>
+}
+
+function Strong({ children }: { children: ReactNode }) {
+  return <Text style={{ fontWeight: 'bold' }}>{children}</Text>
+}
+
+function Emphasis({ children }: { children: ReactNode }) {
+  return <Text style={{ fontStyle: 'italic' }}>{children}</Text>
+}
+
 export const ReactPDFComponentMap = {
-  h1: (props: { children: ReactNode }) => (
-    <Text style={{ fontSize: 24, fontWeight: 'bold' }}>{props.children}</Text>
-  ),
-  strong: (props: { children: ReactNode }) => (
-    <Text style={{ fontWeight: 'bold' }}>{props.children}</Text>
-  ),
+  h1: ({ children }: { children: ReactNode }) => <Heading depth={1}>{children}</Heading>,
+  h2: ({ children }: { children: ReactNode }) => <Heading depth={2}>{children}</Heading>,
+  h3: ({ children }: { children: ReactNode }) => <Heading depth={3}>{children}</Heading>,
+  h4: ({ children }: { children: ReactNode }) => <Heading depth={4}>{children}</Heading>,
+  h5: ({ children }: { children: ReactNode }) => <Heading depth={5}>{children}</Heading>,
+  h6: ({ children }: { children: ReactNode }) => <Heading depth={6}>{children}</Heading>,
+  strong: ({ children }: { children: ReactNode }) => <Strong>{children}</Strong>,
+  em: ({ children }: { children: ReactNode }) => <Emphasis>{children}</Emphasis>,
   p: (props: { children: ReactNode }) => <Text style={{ fontSize: 12 }}>{props.children}</Text>,
   ul: (props: { children: ReactNode }) => (
     <View style={{ border: '1px solid black' }}>{stripWhitespaceNodes(props.children)}</View>
