@@ -4,75 +4,21 @@ import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { compile } from '@mdx-js/mdx'
 import { MDXProvider } from '@mdx-js/react'
-import { Document, Font, Link, Page, renderToFile, Text, View } from '@react-pdf/renderer'
-import type { ReactElement, ReactNode } from 'react'
-import { Children, cloneElement, isValidElement } from 'react'
+import { Document, Font, Page, renderToFile } from '@react-pdf/renderer'
+import type { ReactElement } from 'react'
+
+import { ReactPDFComponentMap as MdElementMap } from './lib/MdElementMap.js'
 
 Font.register({
   family: 'Noto Sans SC',
   src: fileURLToPath(new URL('./assets/NotoSansSC-Regular.ttf', import.meta.url)),
 })
 
-function stripWhitespaceNodes(node: ReactNode): ReactNode {
-  return Children.map(node, (child) => {
-    if (typeof child === 'string') {
-      return child.trim() === '' ? null : child
-    }
-
-    if (!isValidElement<{ children?: ReactNode }>(child)) {
-      return child
-    }
-
-    if (!('children' in child.props) || child.props.children == null) {
-      return child
-    }
-
-    return cloneElement(child, {
-      children: stripWhitespaceNodes(child.props.children),
-    })
-  })
-}
-
-function PdfRoot({ children }: { children: ReactNode }) {
-  return <View>{stripWhitespaceNodes(children)}</View>
-}
-
-const ReactPDFComponentMap = {
-  h1: (props: { children: ReactNode }) => (
-    <Text style={{ fontSize: 24, fontWeight: 'bold' }}>{props.children}</Text>
-  ),
-  strong: (props: { children: ReactNode }) => (
-    <Text style={{ fontWeight: 'bold' }}>{props.children}</Text>
-  ),
-  p: (props: { children: ReactNode }) => <Text style={{ fontSize: 12 }}>{props.children}</Text>,
-  ul: (props: { children: ReactNode }) => (
-    <View style={{ border: '1px solid black' }}>{stripWhitespaceNodes(props.children)}</View>
-  ),
-  li: (props: { children: ReactNode }) => (
-    <Text
-      style={{
-        fontSize: 12,
-        marginLeft: 10,
-        border: '1px solid blue',
-      }}
-    >
-      - {props.children}
-    </Text>
-  ),
-  a: (props: { children: ReactNode; href: string }) => (
-    <Link src={props.href} style={{ fontSize: 12, color: 'blue' }}>
-      {props.children}
-    </Link>
-  ),
-  wrapper: PdfRoot,
-}
-
 async function convertMdxToReact(mdxContent: string) {
   const result = await compile(mdxContent, {
     providerImportSource: '@mdx-js/react',
   })
-  const js = String(result).replaceAll('"\\n"', 'null')
-  return js
+  return String(result).replaceAll('"\\n"', 'null')
 }
 
 async function loadMdxComponent(mdxJsCode: string, inputPath: string) {
@@ -96,7 +42,7 @@ async function renderMdxToPdf(mdxJsCode: string, inputPath: string) {
   const document = (
     <Document>
       <Page size="A4" style={{ padding: 24, gap: 8, fontFamily: 'Noto Sans SC' }}>
-        <MDXProvider components={ReactPDFComponentMap}>
+        <MDXProvider components={MdElementMap}>
           <MDXContent />
         </MDXProvider>
       </Page>
