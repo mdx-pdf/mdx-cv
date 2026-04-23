@@ -1,0 +1,24 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll.biome": "explicit",
+    "source.organizeImports.biome": "explicit"
+  },
+
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+
+  "editor.inlayHints.fontFamily": "LXGW WenKai Mono",
+  "editor.inlayHints.fontSize": 10,
+
+  "workbench.colorCustomizations": {
+    "[Light Modern]": {
+      "editorInlayHint.foreground": "#6e7781ee",
+      "editorInlayHint.background": "#f6f8fa99",
+      "editorInlayHint.typeForeground": "#6f42c1ee",
+      "editorInlayHint.typeBackground": "#f3f0fa99",
+      "editorInlayHint.parameterForeground": "#0066b8ee",
+      "editorInlayHint.parameterBackground": "#e8f3ff99"
+    }
+  }
+}

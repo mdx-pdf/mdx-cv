@@ -1,0 +1,14 @@
+# Operating System
+.DS_Store
+
+# IDE & Editor
+.idea
+.vscode/settings.json
+
+# Programming Language & Package Manager
+node_modules
+
+# Outputs
+dist
+output/
+output.*
