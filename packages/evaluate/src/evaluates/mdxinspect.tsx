@@ -1,11 +1,13 @@
 import { writeFile } from 'node:fs/promises'
-import { basename, dirname, extname, join } from 'node:path'
+import { basename, dirname, extname, join, resolve } from 'node:path'
+import { pathToFileURL } from 'node:url'
 import { Command } from 'commander'
 import { renderToStaticMarkup } from 'react-dom/server'
 
 async function main(input: string, output: string) {
-  const MDXComponent = await import(input)
-  console.log(MDXComponent)
+  const resolvedPath = resolve(input)
+  const mod = await import(pathToFileURL(resolvedPath).href)
+  const MDXComponent = (mod.default ?? mod) as React.ComponentType
 
   const html = renderToStaticMarkup(<MDXComponent />)
 
