@@ -18,6 +18,7 @@ async function main(input: string, output: string) {
     .use(rehypeStringify)
 
   const md = await readFile(input, 'utf-8')
+
   const file = await processor.process(md)
 
   await writeFile(output, String(file), 'utf-8')

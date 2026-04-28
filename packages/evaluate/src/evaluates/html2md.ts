@@ -10,7 +10,9 @@ const turndownService = new TurndownService()
 
 async function main(input: string, output: string) {
   const html = await readFile(input, 'utf-8')
+
   const md = turndownService.turndown(html)
+
   await writeFile(output, md, 'utf-8')
 }
 
