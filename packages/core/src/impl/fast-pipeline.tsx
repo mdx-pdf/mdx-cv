@@ -7,25 +7,29 @@
 import { writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import mdx from '@mdx-js/esbuild'
+import mdx from '@mdx-js/rollup'
 import { Document, Font, Page, renderToFile } from '@react-pdf/renderer'
-import esbuild from 'esbuild'
 import type { ReactElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import Html, { type HtmlStyles } from 'react-pdf-html'
+import { rollup } from 'rollup'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-async function compileMdxByESBuild(filepath: string, outdir: string) {
+async function compileMdxByRollup(filepath: string, outdir: string) {
   const outfile = join(outdir, 'mdx-cv_output.jsx')
-  await esbuild.build({
-    entryPoints: [filepath],
-    bundle: true,
-    format: 'esm',
-    outfile: outfile,
+  const bundle = await rollup({
+    input: filepath,
     plugins: [mdx()],
     external: ['react/jsx-runtime'],
   })
+
+  await bundle.write({
+    file: outfile,
+    format: 'esm',
+  })
+
+  await bundle.close()
   return outfile
 }
 
@@ -103,7 +107,7 @@ export async function main(input: string, options: Option) {
 
   const ouputDir = options.outputDir
 
-  const outfilepath = await compileMdxByESBuild(input, ouputDir)
+  const outfilepath = await compileMdxByRollup(input, ouputDir)
 
   const MDXComponent = await loadMdxComponentFromFile(outfilepath)
 
