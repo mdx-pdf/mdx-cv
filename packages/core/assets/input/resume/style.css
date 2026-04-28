@@ -1,8 +1,8 @@
 body {
   /* biome-ignore lint/a11y/useGenericFontNames: React-PDF does not support generic font names */
   font-family: "Noto Sans SC", "Helvetica";
-  font-size: 12px;
-  margin: 0;
+  font-size: 10px;
+  margin: 20px 40px;
 }
 
 h1,

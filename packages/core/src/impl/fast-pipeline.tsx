@@ -11,7 +11,7 @@ import mdx from '@mdx-js/rollup'
 import { Document, Font, Page, renderToFile } from '@react-pdf/renderer'
 import type { ReactElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
-import Html, { type HtmlStyles } from 'react-pdf-html'
+import Html from 'react-pdf-html'
 import { rollup } from 'rollup'
 import { cssAsString } from './rollup-plugins/css-as-string.js'
 import { mdxCssCollectorPlugin } from './rollup-plugins/mdx-css-collector-plugin.js'
@@ -51,6 +51,11 @@ async function loadMdxComponentFromFile(filepath: string) {
   }
 }
 
+function createHtmlDocument(htmlFragment: string, options?: Option) {
+  const lang = options?.lang || 'zh-CN'
+  return `<html lang="${lang}"><body>${htmlFragment}</body></html>`
+}
+
 async function renderReactComponentToHtml(
   Component: (props: { components?: Record<string, unknown> }) => ReactElement,
   StyleProvider: (props: {
@@ -67,12 +72,13 @@ async function renderReactComponentToHtml(
     </StyleProvider>,
   )
   const collectedCss = collector.toString()
-  const html = collectedCss ? `<style>${collectedCss}</style>${bodyHtml}` : bodyHtml
-  console.log('Rendered html size: ', html.length)
+  const htmlFragment = collectedCss ? `<style>${collectedCss}</style>${bodyHtml}` : bodyHtml
+  const htmlDocument = createHtmlDocument(htmlFragment, options)
+  console.log('Rendered html size: ', htmlDocument.length)
   if (options?.filedebug) {
-    await writeFile(join(options.outputDir, 'mdx-cv_output.html'), html, 'utf-8')
+    await writeFile(join(options.outputDir, 'mdx-cv_output.html'), htmlDocument, 'utf-8')
   }
-  return html
+  return htmlDocument
 }
 
 interface RenderConfig {
@@ -90,13 +96,12 @@ async function renderHtmlToPdf(html: string, renderConfig: RenderConfig) {
     ],
   })
 
-  const finalHtml = `<html><body>${html}</body></html>`
   const outputPath = join(renderConfig.outdir, 'mdx-cv_output.pdf')
   console.log('Rendering PDF to: ', outputPath)
   renderToFile(
     <Document>
       <Page>
-        <Html>{finalHtml}</Html>
+        <Html>{html}</Html>
       </Page>
     </Document>,
     outputPath,
@@ -106,6 +111,7 @@ async function renderHtmlToPdf(html: string, renderConfig: RenderConfig) {
 interface Option {
   filedebug?: boolean
   outputDir: string
+  lang?: string
   renderConfig?: RenderConfig
 }
 export async function main(input: string, options: Option) {
@@ -141,6 +147,7 @@ if (import.meta.main) {
   program
     .option('-f, --filedebug', 'output intermediate files for debugging')
     .option('-o, --output <output>', 'path to the output file')
+    .option('-l, --lang <lang>', 'language of the document, e.g. "en" or "zh-CN"')
     .argument('<input>', 'path to the input MDX file')
     .action(async (input, options) => {
       const inputDir = dirname(input)
