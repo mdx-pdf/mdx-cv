@@ -5,7 +5,7 @@
 // 4. Render React-PDF to PDF file
 
 import { writeFile } from 'node:fs/promises'
-import { dirname, join, resolve } from 'node:path'
+import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import mdx from '@mdx-js/esbuild'
 import { Document, Font, Page, renderToFile } from '@react-pdf/renderer'
@@ -13,6 +13,8 @@ import esbuild from 'esbuild'
 import type { ReactElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import Html, { type HtmlStyles } from 'react-pdf-html'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 async function compileMdxByESBuild(filepath: string, outdir: string) {
   const outfile = join(outdir, 'mdx-cv_output.jsx')
@@ -34,69 +36,102 @@ async function loadMdxComponentFromFile(filepath: string) {
 
 async function renderReactComponentToHtml(
   Component: (props: { components?: Record<string, unknown> }) => ReactElement,
+  options?: Option,
 ) {
-  return renderToStaticMarkup(<Component />)
+  const html = renderToStaticMarkup(<Component />)
+  console.log('Rendered html size: ', html.length)
+  if (options?.filedebug) {
+    await writeFile(join(options.outputDir, 'mdx-cv_output.html'), html, 'utf-8')
+  }
+  return html
 }
 
 interface RenderConfig {
-  styleSheet: HtmlStyles
+  assetsDir: string
+  outdir: string
+  styleSheet?: HtmlStyles
 }
-async function renderHtmlToPdf(html: string, outputPath: string, renderConfig?: RenderConfig) {
-  const fontDir = join(dirname(fileURLToPath(import.meta.url)), '../../src/assets')
+async function renderHtmlToPdf(html: string, renderConfig: RenderConfig) {
+  const assetsDir = renderConfig.assetsDir
+  // const style = await readFile(join(renderConfig.assetsDir, 'resume', 'style.css'), 'utf-8')
+  // const result = convertCssToReactPdfStylesheet(style, {
+  //   mode: 'loose',
+  //   baseFontSize: 12,
+  // })
+
+  // await writeFile(
+  //   join(__dirname, '..', '..', 'assets', 'output', 'css-to-react-pdf-result.json'),
+  //   JSON.stringify(result.styles, null, 2),
+  //   'utf-8',
+  // )
+
   Font.register({
     family: 'Noto Sans SC',
     fonts: [
-      { src: join(fontDir, 'NotoSansSC-Regular.ttf') },
-      { src: join(fontDir, 'NotoSansSC-Bold.ttf'), fontWeight: 'bold' },
+      { src: join(assetsDir, 'NotoSansSC-Regular.ttf') },
+      { src: join(assetsDir, 'NotoSansSC-Bold.ttf'), fontWeight: 'bold' },
     ],
   })
 
   const stylesheet: HtmlStyles = renderConfig?.styleSheet ?? {
     '*': { fontFamily: 'Noto Sans SC', fontSize: 12, lineHeight: 1.5 },
   }
+  const finalHtml = `<html><body>${html}</body></html>`
+  const outputPath = join(renderConfig.outdir, 'mdx-cv_output.pdf')
+  console.log('Rendering PDF to: ', outputPath)
   renderToFile(
     <Document>
       <Page style={{ fontFamily: 'Noto Sans SC' }}>
-        <Html resetStyles stylesheet={stylesheet}>
-          {html}
-        </Html>
+        <Html stylesheet={stylesheet}>{finalHtml}</Html>
       </Page>
     </Document>,
     outputPath,
   )
 }
 
-interface Config {
+interface Option {
   filedebug?: boolean
+  outputDir: string
   renderConfig?: RenderConfig
 }
-export async function main(inputPath: string, config: Config = {}) {
-  const ouputDir = join(dirname(fileURLToPath(import.meta.url)), '../../output')
+export async function main(input: string, options: Option) {
+  if (!options.outputDir) {
+    return console.error(
+      'Output directory is required. Please provide it via --output option or place the input file in an "assets/input" directory.',
+    )
+  }
 
-  const outfilepath = await compileMdxByESBuild(inputPath, ouputDir)
+  const ouputDir = options.outputDir
+
+  const outfilepath = await compileMdxByESBuild(input, ouputDir)
 
   const MDXComponent = await loadMdxComponentFromFile(outfilepath)
 
   const html = await renderReactComponentToHtml(MDXComponent)
-  console.log('Rendered html: ', html.length)
 
-  if (config.filedebug) {
-    await writeFile(join(ouputDir, 'mdx-cv_output.html'), html, 'utf-8')
-  }
-
-  await renderHtmlToPdf(html, join(ouputDir, 'mdx-cv_output.pdf'))
-  console.log('Rendered PDF: ', join(ouputDir, 'mdx-cv_output.pdf'))
+  await renderHtmlToPdf(html, {
+    assetsDir: join(__dirname, '../../assets/input'),
+    outdir: ouputDir,
+    ...options.renderConfig,
+  })
 }
 
 if (import.meta.main) {
-  const input = process.argv[2]
+  const { program } = await import('commander')
 
-  if (input) {
-    const inputpath = resolve(process.cwd(), input)
-    console.log('Run with input: ', inputpath)
+  program
+    .option('-f, --filedebug', 'output intermediate files for debugging')
+    .option('-o, --output <output>', 'path to the output file')
+    .argument('<input>', 'path to the input MDX file')
+    .action(async (input, options) => {
+      const inputDir = dirname(input)
+      options.outputDir =
+        options.output ??
+        (inputDir.includes(join('assets', 'input'))
+          ? join(__dirname, '..', '..', 'assets', 'output')
+          : inputDir)
 
-    await main(inputpath)
-  } else {
-    console.log('Run without input.')
-  }
+      await main(input, options)
+    })
+    .parseAsync()
 }
