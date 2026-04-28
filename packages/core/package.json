@@ -9,6 +9,7 @@
   "scripts": {
     "start": "tsx src/index.tsx",
     "clean": "rm -f output/*",
+    "validate:css-converter": "tsx examples/convert-css-to-react-pdf.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -17,6 +18,8 @@
     "@mdx-js/react": "^3.1.1",
     "@react-pdf/renderer": "^4.5.1",
     "esbuild": "^0.28.0",
+    "postcss": "^8.5.12",
+    "postcss-js": "^5.1.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-pdf-html": "^2.1.5"
@@ -25,6 +28,7 @@
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "commander": "^14.0.3",
     "tsx": "^4.21.0",
     "typescript": "^6.0.3"
   },

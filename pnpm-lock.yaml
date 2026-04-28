@@ -44,24 +44,6 @@ importers:
       react-pdf-html:
         specifier: ^2.1.5
         version: 2.1.5(@react-pdf/renderer@4.5.1(react@19.2.5))(react@19.2.5)
-      rehype-stringify:
-        specifier: ^10.0.1
-        version: 10.0.1
-      remark-gfm:
-        specifier: ^4.0.1
-        version: 4.0.1
-      remark-parse:
-        specifier: ^11.0.0
-        version: 11.0.0
-      remark-rehype:
-        specifier: ^11.1.2
-        version: 11.1.2
-      turndown:
-        specifier: ^7.2.4
-        version: 7.2.4
-      unified:
-        specifier: ^11.0.5
-        version: 11.0.5
     devDependencies:
       '@types/node':
         specifier: ^25.6.0
@@ -72,6 +54,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.14)
+      commander:
+        specifier: ^14.0.3
+        version: 14.0.3
       tsx:
         specifier: ^4.21.0
         version: 4.21.0
@@ -81,30 +66,15 @@ importers:
 
   packages/evaluate:
     dependencies:
-      '@mdx-js/esbuild':
-        specifier: ^3.1.1
-        version: 3.1.1(esbuild@0.28.0)
       '@mdx-js/mdx':
         specifier: ^3.1.1
         version: 3.1.1
-      '@mdx-js/react':
-        specifier: ^3.1.1
-        version: 3.1.1(@types/react@19.2.14)(react@19.2.5)
       '@react-pdf/renderer':
         specifier: ^4.5.1
         version: 4.5.1(react@19.2.5)
       commander:
         specifier: ^14.0.3
         version: 14.0.3
-      esbuild:
-        specifier: ^0.28.0
-        version: 0.28.0
-      postcss:
-        specifier: ^8.5.12
-        version: 8.5.12
-      postcss-js:
-        specifier: ^5.1.0
-        version: 5.1.0(postcss@8.5.12)
       react:
         specifier: ^19.2.5
         version: 19.2.5
