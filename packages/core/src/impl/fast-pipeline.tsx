@@ -13,15 +13,21 @@ import type { ReactElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import Html, { type HtmlStyles } from 'react-pdf-html'
 import { rollup } from 'rollup'
+import { cssAsString } from './rollup-plugins/css-as-string.js'
+import { mdxCssCollectorPlugin } from './rollup-plugins/mdx-css-collector-plugin.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
+
+function isExternalModule(id: string) {
+  return id === 'react' || id === 'react/jsx-runtime'
+}
 
 async function compileMdxByRollup(filepath: string, outdir: string) {
   const outfile = join(outdir, 'mdx-cv_output.jsx')
   const bundle = await rollup({
     input: filepath,
-    plugins: [mdx()],
-    external: ['react/jsx-runtime'],
+    plugins: [mdx(), mdxCssCollectorPlugin(), cssAsString()],
+    external: isExternalModule,
   })
 
   await bundle.write({
@@ -35,14 +41,33 @@ async function compileMdxByRollup(filepath: string, outdir: string) {
 
 async function loadMdxComponentFromFile(filepath: string) {
   const module = await import(pathToFileURL(filepath).href)
-  return module.default as (props: { components?: Record<string, unknown> }) => ReactElement
+  return module as {
+    default: (props: { components?: Record<string, unknown> }) => ReactElement
+    createStyleCollector: () => { add(css: string): void; toString(): string }
+    StyleProvider: (props: {
+      collector: { add(css: string): void }
+      children: ReactElement
+    }) => ReactElement
+  }
 }
 
 async function renderReactComponentToHtml(
   Component: (props: { components?: Record<string, unknown> }) => ReactElement,
+  StyleProvider: (props: {
+    collector: { add(css: string): void }
+    children: ReactElement
+  }) => ReactElement,
+  createStyleCollector: () => { add(css: string): void; toString(): string },
   options?: Option,
 ) {
-  const html = renderToStaticMarkup(<Component />)
+  const collector = createStyleCollector()
+  const bodyHtml = renderToStaticMarkup(
+    <StyleProvider collector={collector}>
+      <Component />
+    </StyleProvider>,
+  )
+  const collectedCss = collector.toString()
+  const html = collectedCss ? `<style>${collectedCss}</style>${bodyHtml}` : bodyHtml
   console.log('Rendered html size: ', html.length)
   if (options?.filedebug) {
     await writeFile(join(options.outputDir, 'mdx-cv_output.html'), html, 'utf-8')
@@ -53,21 +78,9 @@ async function renderReactComponentToHtml(
 interface RenderConfig {
   assetsDir: string
   outdir: string
-  styleSheet?: HtmlStyles
 }
 async function renderHtmlToPdf(html: string, renderConfig: RenderConfig) {
   const assetsDir = renderConfig.assetsDir
-  // const style = await readFile(join(renderConfig.assetsDir, 'resume', 'style.css'), 'utf-8')
-  // const result = convertCssToReactPdfStylesheet(style, {
-  //   mode: 'loose',
-  //   baseFontSize: 12,
-  // })
-
-  // await writeFile(
-  //   join(__dirname, '..', '..', 'assets', 'output', 'css-to-react-pdf-result.json'),
-  //   JSON.stringify(result.styles, null, 2),
-  //   'utf-8',
-  // )
 
   Font.register({
     family: 'Noto Sans SC',
@@ -77,16 +90,13 @@ async function renderHtmlToPdf(html: string, renderConfig: RenderConfig) {
     ],
   })
 
-  const stylesheet: HtmlStyles = renderConfig?.styleSheet ?? {
-    '*': { fontFamily: 'Noto Sans SC', fontSize: 12, lineHeight: 1.5 },
-  }
   const finalHtml = `<html><body>${html}</body></html>`
   const outputPath = join(renderConfig.outdir, 'mdx-cv_output.pdf')
   console.log('Rendering PDF to: ', outputPath)
   renderToFile(
     <Document>
-      <Page style={{ fontFamily: 'Noto Sans SC' }}>
-        <Html stylesheet={stylesheet}>{finalHtml}</Html>
+      <Page>
+        <Html>{finalHtml}</Html>
       </Page>
     </Document>,
     outputPath,
@@ -109,9 +119,14 @@ export async function main(input: string, options: Option) {
 
   const outfilepath = await compileMdxByRollup(input, ouputDir)
 
-  const MDXComponent = await loadMdxComponentFromFile(outfilepath)
+  const compiledModule = await loadMdxComponentFromFile(outfilepath)
 
-  const html = await renderReactComponentToHtml(MDXComponent)
+  const html = await renderReactComponentToHtml(
+    compiledModule.default,
+    compiledModule.StyleProvider,
+    compiledModule.createStyleCollector,
+    options,
+  )
 
   await renderHtmlToPdf(html, {
     assetsDir: join(__dirname, '../../assets/input'),

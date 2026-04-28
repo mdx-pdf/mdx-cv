@@ -22,7 +22,8 @@
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-pdf-html": "^2.1.5",
-    "rollup": "^4.60.2"
+    "rollup": "^4.60.2",
+    "rollup-plugin-import-css": "^4.2.1"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",

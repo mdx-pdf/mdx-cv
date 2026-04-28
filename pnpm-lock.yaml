@@ -44,6 +44,9 @@ importers:
       rollup:
         specifier: ^4.60.2
         version: 4.60.2
+      rollup-plugin-import-css:
+        specifier: ^4.2.1
+        version: 4.2.1(rollup@4.60.2)
     devDependencies:
       '@types/node':
         specifier: ^25.6.0
@@ -1164,6 +1167,12 @@ packages:
 
   restructure@3.0.2:
     resolution: {integrity: sha512-gSfoiOEA0VPE6Tukkrr7I0RBdE0s7H1eFCDBk05l1KIQT1UIKNc5JZy6jdyW6eYH3aR3g5b3PuL77rq0hvwtAw==}
+
+  rollup-plugin-import-css@4.2.1:
+    resolution: {integrity: sha512-X0TbADEYeCWx0ULS3d9I2vRHT9smhSDkCol8bTCDyI0pAJAZStK0EGo9c4i9hUbOoPeTgWE+hcUjm0V/GoseUQ==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      rollup: ^2.x.x || ^3.x.x || ^4.x.x
 
   rollup@4.60.2:
     resolution: {integrity: sha512-J9qZyW++QK/09NyN/zeO0dG/1GdGfyp9lV8ajHnRVLfo/uFsbji5mHnDgn/qYdUHyCkM2N+8VyspgZclfAh0eQ==}
@@ -2618,6 +2627,11 @@ snapshots:
   resolve-pkg-maps@1.0.0: {}
 
   restructure@3.0.2: {}
+
+  rollup-plugin-import-css@4.2.1(rollup@4.60.2):
+    dependencies:
+      '@rollup/pluginutils': 5.3.0(rollup@4.60.2)
+      rollup: 4.60.2
 
   rollup@4.60.2:
     dependencies:
