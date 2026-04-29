@@ -1,9 +1,9 @@
 import { readFile } from 'node:fs/promises'
 import { basename, dirname, extname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { Html } from '@hzstudio/react-pdf-html'
 import ReactPDF, { Document, Page } from '@react-pdf/renderer'
 import { Command } from 'commander'
-import { Html } from 'react-pdf-html'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 

@@ -14,6 +14,9 @@ importers:
 
   packages/core:
     dependencies:
+      '@hzstudio/react-pdf-html':
+        specifier: ^2.1.5
+        version: 2.1.5(@react-pdf/renderer@4.5.1(react@19.2.5))(react@19.2.5)
       '@mdx-js/mdx':
         specifier: ^3.1.1
         version: 3.1.1
@@ -32,15 +35,15 @@ importers:
       postcss-js:
         specifier: ^5.1.0
         version: 5.1.0(postcss@8.5.12)
+      postcss-load-config:
+        specifier: ^6.0.1
+        version: 6.0.1(postcss@8.5.12)(tsx@4.21.0)
       react:
         specifier: ^19.2.5
         version: 19.2.5
       react-dom:
         specifier: ^19.2.5
         version: 19.2.5(react@19.2.5)
-      react-pdf-html:
-        specifier: ^2.1.5
-        version: 2.1.5(@react-pdf/renderer@4.5.1(react@19.2.5))(react@19.2.5)
       rollup:
         specifier: ^4.60.2
         version: 4.60.2
@@ -69,6 +72,9 @@ importers:
 
   packages/evaluate:
     dependencies:
+      '@hzstudio/react-pdf-html':
+        specifier: ^2.1.5
+        version: 2.1.5(@react-pdf/renderer@4.5.1(react@19.2.5))(react@19.2.5)
       '@mdx-js/mdx':
         specifier: ^3.1.1
         version: 3.1.1
@@ -84,9 +90,6 @@ importers:
       react-dom:
         specifier: ^19.2.5
         version: 19.2.5(react@19.2.5)
-      react-pdf-html:
-        specifier: ^2.1.5
-        version: 2.1.5(@react-pdf/renderer@4.5.1(react@19.2.5))(react@19.2.5)
       rehype-stringify:
         specifier: ^10.0.1
         version: 10.0.1
@@ -343,6 +346,13 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@hzstudio/react-pdf-html@2.1.5':
+    resolution: {integrity: sha512-G84a11boIaowRzTXQqJNtOg/ag3wmuFwOX9xtadFjjHZjzG4QpeDZXDKCLS5JlVqkNsvszYx+0c4BRNtEXrTDw==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      '@react-pdf/renderer': '>=3.4.4'
+      react: '>=16'
 
   '@mdx-js/mdx@3.1.1':
     resolution: {integrity: sha512-f6ZO2ifpwAQIpzGWaBQT2TXxPv6z3RBzQKpVftEWN78Vl/YweF1uwussDx8ECAXVtr3Rs89fKyG9YlzUs9DyGQ==}
@@ -863,6 +873,10 @@ packages:
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
+  lilconfig@3.1.3:
+    resolution: {integrity: sha512-/vlFKAoH5Cgt3Ie+JLhRbwOsCQePABiU3tJ1egGvyQ+33R/vcwM2Zl2QR/LzjsBeItPt3oSVXapn+m4nQDvpzw==}
+    engines: {node: '>=14'}
+
   linebreak@1.1.0:
     resolution: {integrity: sha512-MHp03UImeVhB7XZtjd0E4n6+3xr5Dq/9xI/5FptGk5FrbDR3zagPa2DS6U8ks/3HjbKWG9Q1M2ufOzxV2qLYSQ==}
 
@@ -1088,6 +1102,24 @@ packages:
     peerDependencies:
       postcss: ^8.4.21
 
+  postcss-load-config@6.0.1:
+    resolution: {integrity: sha512-oPtTM4oerL+UXmx+93ytZVN82RrlY/wPUV8IeDxFrzIjXOLF1pN+EmKPLbubvKHT2HC20xXsCAH2Z+CKV6Oz/g==}
+    engines: {node: '>= 18'}
+    peerDependencies:
+      jiti: '>=1.21.0'
+      postcss: '>=8.0.9'
+      tsx: ^4.8.1
+      yaml: ^2.4.2
+    peerDependenciesMeta:
+      jiti:
+        optional: true
+      postcss:
+        optional: true
+      tsx:
+        optional: true
+      yaml:
+        optional: true
+
   postcss-value-parser@4.2.0:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
 
@@ -1111,13 +1143,6 @@ packages:
 
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
-
-  react-pdf-html@2.1.5:
-    resolution: {integrity: sha512-KhmiTUcnUNbLVdZbxMcV/+Rp+PyBt+eVJHu425eNwjSsDUtytvcwS/SBdBbbpM0c4+MnnOQBOs3AiColUesM8A==}
-    engines: {node: '>=16.0.0'}
-    peerDependencies:
-      '@react-pdf/renderer': '>=3.4.4'
-      react: '>=16'
 
   react@19.2.5:
     resolution: {integrity: sha512-llUJLzz1zTUBrskt2pwZgLq59AemifIftw4aB7JxOqf1HY2FDaGDxgwpAPVzHU1kdWabH7FauP4i1oEeer2WCA==}
@@ -1409,6 +1434,13 @@ snapshots:
 
   '@esbuild/win32-x64@0.27.7':
     optional: true
+
+  '@hzstudio/react-pdf-html@2.1.5(@react-pdf/renderer@4.5.1(react@19.2.5))(react@19.2.5)':
+    dependencies:
+      '@react-pdf/renderer': 4.5.1(react@19.2.5)
+      css-tree: 1.1.3
+      node-html-parser: 6.1.13
+      react: 19.2.5
 
   '@mdx-js/mdx@3.1.1':
     dependencies:
@@ -2009,6 +2041,8 @@ snapshots:
 
   js-tokens@4.0.0: {}
 
+  lilconfig@3.1.3: {}
+
   linebreak@1.1.0:
     dependencies:
       base64-js: 0.0.8
@@ -2502,6 +2536,13 @@ snapshots:
     dependencies:
       postcss: 8.5.12
 
+  postcss-load-config@6.0.1(postcss@8.5.12)(tsx@4.21.0):
+    dependencies:
+      lilconfig: 3.1.3
+    optionalDependencies:
+      postcss: 8.5.12
+      tsx: 4.21.0
+
   postcss-value-parser@4.2.0: {}
 
   postcss@8.5.12:
@@ -2528,13 +2569,6 @@ snapshots:
       scheduler: 0.27.0
 
   react-is@16.13.1: {}
-
-  react-pdf-html@2.1.5(@react-pdf/renderer@4.5.1(react@19.2.5))(react@19.2.5):
-    dependencies:
-      '@react-pdf/renderer': 4.5.1(react@19.2.5)
-      css-tree: 1.1.3
-      node-html-parser: 6.1.13
-      react: 19.2.5
 
   react@19.2.5: {}
 

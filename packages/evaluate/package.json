@@ -12,12 +12,12 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@hzstudio/react-pdf-html": "^2.1.5",
     "@mdx-js/mdx": "^3.1.1",
     "@react-pdf/renderer": "^4.5.1",
     "commander": "^14.0.3",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "react-pdf-html": "^2.1.5",
     "rehype-stringify": "^10.0.1",
     "remark-gfm": "^4.0.1",
     "remark-parse": "^11.0.0",
