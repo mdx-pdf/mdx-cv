@@ -60,7 +60,7 @@ async function main(inputPath: string) {
   const content = await readFile(inputPath, 'utf-8')
 
   const reactContent = await convertMdxToReact(content)
-  const jsxOutputDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '../output')
+  const jsxOutputDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '../../output')
   await writeFile(path.join(jsxOutputDir, 'output.jsx'), reactContent, 'utf-8')
   console.log('Generated JSX at: ', jsxOutputDir)
 
