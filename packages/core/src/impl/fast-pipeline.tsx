@@ -13,6 +13,7 @@ import { Document, Font, Page, renderToFile } from '@react-pdf/renderer'
 import type { ReactElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { rollup } from 'rollup'
+import esbuild from 'rollup-plugin-esbuild'
 import { cssAsString } from './rollup-plugins/css-as-string.js'
 import { mdxCssCollectorPlugin } from './rollup-plugins/mdx-css-collector-plugin.js'
 
@@ -26,7 +27,7 @@ async function compileMdxByRollup(filepath: string, outdir: string) {
   const outfile = join(outdir, 'mdx-cv_output.jsx')
   const bundle = await rollup({
     input: filepath,
-    plugins: [mdx(), mdxCssCollectorPlugin(), cssAsString()],
+    plugins: [mdx(), esbuild({ include: /\.[jt]sx?$/ }), mdxCssCollectorPlugin(), cssAsString()],
     external: isExternalModule,
   })
 
@@ -39,16 +40,31 @@ async function compileMdxByRollup(filepath: string, outdir: string) {
   return outfile
 }
 
-async function loadMdxComponentFromFile(filepath: string) {
+interface MdxCompiledModule {
+  default: (props: { components?: Record<string, unknown> }) => ReactElement
+  createStyleCollector?: () => { add(css: string): void; toString(): string }
+  StyleProvider?: (props: {
+    collector: { add(css: string): void }
+    children: ReactElement
+  }) => ReactElement
+}
+
+async function loadMdxComponentFromFile(filepath: string): Promise<MdxCompiledModule> {
   const module = await import(pathToFileURL(filepath).href)
-  return module as {
-    default: (props: { components?: Record<string, unknown> }) => ReactElement
-    createStyleCollector: () => { add(css: string): void; toString(): string }
-    StyleProvider: (props: {
-      collector: { add(css: string): void }
-      children: ReactElement
-    }) => ReactElement
-  }
+  return module as MdxCompiledModule
+}
+
+function noopStyleCollector() {
+  const css: string[] = []
+  return { add: (c: string) => css.push(c), toString: () => css.join('\n') }
+}
+
+function fallbackStyleProvider(props: { children: ReactElement }) {
+  return props.children
+}
+
+function isStyleCollectorExported(mod: MdxCompiledModule): mod is Required<MdxCompiledModule> {
+  return typeof mod.createStyleCollector === 'function' && typeof mod.StyleProvider === 'function'
 }
 
 function createHtmlDocument(htmlFragment: string, options?: Option) {
@@ -127,10 +143,15 @@ export async function main(input: string, options: Option) {
 
   const compiledModule = await loadMdxComponentFromFile(outfilepath)
 
+  const Component = compiledModule.default
+  const hasStyleCollector = isStyleCollectorExported(compiledModule)
+  const StyleProvider = hasStyleCollector ? compiledModule.StyleProvider : fallbackStyleProvider
+  const createStyleCollector = hasStyleCollector ? compiledModule.createStyleCollector : noopStyleCollector
+
   const html = await renderReactComponentToHtml(
-    compiledModule.default,
-    compiledModule.StyleProvider,
-    compiledModule.createStyleCollector,
+    Component,
+    StyleProvider,
+    createStyleCollector,
     options,
   )
 
