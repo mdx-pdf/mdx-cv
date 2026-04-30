@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { cssToObject, objectToCss } from './css-object-convert.js'
+import { cssToObject, objectToCss } from './css-convert.js'
 
 describe('css-object-convert', () => {
   it('should convert css string to object', () => {
