@@ -14,6 +14,7 @@ import type { ReactElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { rollup } from 'rollup'
 import esbuild from 'rollup-plugin-esbuild'
+import { convertCssToRphCss } from '../lib/react-pdf-style-utils/rph-css-convert.js'
 import { cssAsString } from './rollup-plugins/css-as-string.js'
 import { mdxCssCollectorPlugin } from './rollup-plugins/mdx-css-collector-plugin.js'
 
@@ -88,7 +89,9 @@ async function renderReactComponentToHtml(
     </StyleProvider>,
   )
   const collectedCss = collector.toString()
-  const htmlFragment = collectedCss ? `<style>${collectedCss}</style>${bodyHtml}` : bodyHtml
+  const htmlFragment = collectedCss
+    ? `<style>${convertCssToRphCss(collectedCss)}</style>${bodyHtml}`
+    : bodyHtml
   const htmlDocument = createHtmlDocument(htmlFragment, options)
   console.log('Rendered html size: ', htmlDocument.length)
   if (options?.filedebug) {

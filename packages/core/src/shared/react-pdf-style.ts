@@ -32,7 +32,25 @@ const VALID_CSS_PROPERTIES_BY_CATEGORY = {
   ],
   dimension: ['height', 'maxHeight', 'minHeight', 'width', 'maxWidth', 'minWidth'],
   color: ['backgroundColor', 'color', 'opacity'],
-  sizing: ['object-fit', 'object-position'],
+  text: [
+    'direction', // ltr, rtl
+    'fontSize',
+    'fontFamily',
+    'fontStyle',
+    'fontWeight',
+    'letterSpacing',
+    'lineHeight',
+    'maxLines',
+    'textAlign',
+    'textDecoration',
+    'textDecorationColor',
+    'textDecorationStyle',
+    'textIndent',
+    'textOverflow',
+    'textTransform',
+    'verticalAlign', // sub, super
+  ],
+  'sizing/positioning': ['object-fit', 'object-position'],
   'margin & padding': [
     'margin',
     'marginHorizontal',
