@@ -5,7 +5,7 @@
 // 4. Render React-PDF to PDF file
 
 import { writeFile } from 'node:fs/promises'
-import { dirname, join } from 'node:path'
+import { basename, dirname, extname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import Html from '@hzstudio/react-pdf-html'
 import mdx from '@mdx-js/rollup'
@@ -137,6 +137,9 @@ export async function main(input: string, options: Option) {
     )
   }
 
+  const inputFileName = basename(input, extname(input))
+  console.log(`Processing file: ${inputFileName}`)
+
   const ouputDir = options.outputDir
 
   const outfilepath = await compileMdxByRollup(input, ouputDir)
@@ -146,7 +149,9 @@ export async function main(input: string, options: Option) {
   const Component = compiledModule.default
   const hasStyleCollector = isStyleCollectorExported(compiledModule)
   const StyleProvider = hasStyleCollector ? compiledModule.StyleProvider : fallbackStyleProvider
-  const createStyleCollector = hasStyleCollector ? compiledModule.createStyleCollector : noopStyleCollector
+  const createStyleCollector = hasStyleCollector
+    ? compiledModule.createStyleCollector
+    : noopStyleCollector
 
   const html = await renderReactComponentToHtml(
     Component,
