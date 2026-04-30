@@ -20,5 +20,11 @@
       "editorInlayHint.parameterForeground": "#0066b8ee",
       "editorInlayHint.parameterBackground": "#e8f3ff99"
     }
+  },
+  "[html]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[mdx]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   }
 }
