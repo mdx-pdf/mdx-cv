@@ -2,7 +2,7 @@ export const VALID_UNITS = ['pt', 'in', 'mm', 'cm', '%', 'vw', 'vh'] as const
 
 export type ValidUnit = (typeof VALID_UNITS)[number]
 
-const VALID_CSS_PROPERTIES = {
+const VALID_CSS_PROPERTIES_BY_CATEGORY = {
   flexbox: [
     'alignContent',
     'alignItems',
@@ -89,4 +89,12 @@ const VALID_CSS_PROPERTIES = {
     'borderBottomRightRadius',
     'borderBottomLeftRadius',
   ],
+}
+
+const VALID_CSS_PROPERTIES = Object.values(VALID_CSS_PROPERTIES_BY_CATEGORY).flat()
+
+export function isValidCssProperty(
+  property: string,
+): property is (typeof VALID_CSS_PROPERTIES)[number] {
+  return VALID_CSS_PROPERTIES.includes(property)
 }
