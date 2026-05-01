@@ -8,7 +8,7 @@ import { Document, Font, Page, renderToFile } from '@react-pdf/renderer'
 import { Command } from 'commander'
 import type { ReactElement } from 'react'
 
-import { ElementMap } from '../lib/ElementMap.js'
+import { ElementMap } from '../elements/index.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -40,9 +40,9 @@ async function loadMdxComponent(mdxJsCode: string, inputPath: string) {
   }
 }
 
-async function renderMdxToPdf(mdxJsCode: string, inputPath: string) {
+async function renderMdxToPdf(mdxJsCode: string, inputPath: string, options: Option) {
   const MDXContent = await loadMdxComponent(mdxJsCode, inputPath)
-  const outputPath = join(dirname(inputPath), 'output.pdf')
+  const outputPath = join(options.outputDir, 'output.pdf')
 
   const document = (
     <Document>
@@ -59,15 +59,21 @@ async function renderMdxToPdf(mdxJsCode: string, inputPath: string) {
   return outputPath
 }
 
-async function main(input: string) {
+interface Option {
+  filedebug?: boolean
+  outputDir: string
+  lang?: string
+  resetCss?: boolean
+}
+async function main(input: string, options: Option) {
   const content = await readFile(input, 'utf-8')
 
   const reactContent = await convertMdxToReact(content)
-  const jsxOutputDir = join(dirname(fileURLToPath(import.meta.url)), '../../output')
-  await writeFile(join(jsxOutputDir, 'output.jsx'), reactContent, 'utf-8')
-  console.log('Generated JSX at: ', jsxOutputDir)
 
-  const pdfPath = await renderMdxToPdf(reactContent, input)
+  await writeFile(join(options.outputDir, 'output.jsx'), reactContent, 'utf-8')
+  console.log('Generated JSX at: ', options.outputDir)
+
+  const pdfPath = await renderMdxToPdf(reactContent, input, options)
   console.log('Rendered PDF: ', pdfPath)
 }
 
@@ -80,11 +86,7 @@ render
   .argument('<input>', 'path to the input MDX file')
   .action(async (input, options) => {
     const inputDir = dirname(input)
-    options.outputDir =
-      options.output ??
-      (inputDir.includes(join('assets', 'input'))
-        ? join(__dirname, '..', '..', 'assets', 'output')
-        : inputDir)
+    options.outputDir = options.output ?? inputDir
 
-    await main(input)
+    await main(input, options)
   })
