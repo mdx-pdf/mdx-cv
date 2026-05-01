@@ -39,6 +39,12 @@ async function main(output: string) {
             <Text>Section #2</Text>
             <Text>Section #2</Text>
           </View>
+          <View style={{ position: 'relative' }}>
+            <Text>Left #3</Text>
+            <View style={{ position: 'absolute', right: 0 }}>
+              <Text>Right #3</Text>
+            </View>
+          </View>
         </View>
       </Page>
     </Document>
