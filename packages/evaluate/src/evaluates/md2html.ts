@@ -2,6 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises'
 import { basename, dirname, extname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { Command } from 'commander'
+import postcss from 'postcss'
 import rehypeStringify from 'rehype-stringify'
 import remarkGfm from 'remark-gfm'
 import remarkParse from 'remark-parse'
@@ -30,7 +31,26 @@ async function main(input: string, options: Options) {
 
   if (options.style) {
     const css = await readFile(options.style, 'utf-8')
-    const styleTag = `<style>${css}</style>`
+    const finalCss = postcss([
+      {
+        postcssPlugin: 'em-to-px',
+        Declaration(decl) {
+          if (decl.value.includes('em')) {
+            const baseFontSize = 10
+            decl.value = decl.value.replace(/(\d*\.?\d+)em/g, (_, p1) => {
+              return `${parseFloat(p1) * baseFontSize}px`
+            })
+            if (decl.value.includes('rem')) {
+              const baseFontSize = 10
+              decl.value = decl.value.replace(/(\d*\.?\d+)rem/g, (_, p1) => {
+                return `${parseFloat(p1) * baseFontSize}px`
+              })
+            }
+          }
+        },
+      },
+    ]).process(css)
+    const styleTag = `<style>${finalCss.css}</style>`
     const htmlWithStyle = `${styleTag}\n${String(htmlContent)}`
     finalHtml = htmlWithStyle
   }
