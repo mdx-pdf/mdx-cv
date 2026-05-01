@@ -79,7 +79,7 @@ function ListItem({ children }: { children: ReactNode }) {
   )
 }
 
-export const ReactPDFComponentMap = {
+export const ElementMap = {
   h1: ({ children }: { children: ReactNode }) => <Heading depth={1}>{children}</Heading>,
   h2: ({ children }: { children: ReactNode }) => <Heading depth={2}>{children}</Heading>,
   h3: ({ children }: { children: ReactNode }) => <Heading depth={3}>{children}</Heading>,

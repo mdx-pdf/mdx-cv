@@ -8,7 +8,7 @@ import { Document, Font, Page, renderToFile } from '@react-pdf/renderer'
 import { Command } from 'commander'
 import type { ReactElement } from 'react'
 
-import { ReactPDFComponentMap as MdElementMap } from '../lib/MdElementMap.js'
+import { ElementMap } from '../lib/ElementMap.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -47,7 +47,7 @@ async function renderMdxToPdf(mdxJsCode: string, inputPath: string) {
   const document = (
     <Document>
       <Page size="A4" style={{ padding: 24, gap: 8, fontFamily: 'Noto Sans SC' }}>
-        <MDXProvider components={MdElementMap}>
+        <MDXProvider components={ElementMap}>
           <MDXContent />
         </MDXProvider>
       </Page>
