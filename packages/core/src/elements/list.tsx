@@ -12,20 +12,20 @@ export function List({ children }: { children: ReactNode }) {
   )
 }
 
-export const ul = ({ children }: { children: ReactNode }) => <List>{children}</List>
-ul.displayName = 'ul'
-export const ol = ({ children }: { children: ReactNode }) => <List>{children}</List>
-ol.displayName = 'ol'
+export const UL = ({ children }: { children: ReactNode }) => <List>{children}</List>
+UL.displayName = 'ul'
+export const OL = ({ children }: { children: ReactNode }) => <List>{children}</List>
+OL.displayName = 'ol'
 
 export function ListItem({ children }: { children: ReactNode }) {
   const childArray = Children.toArray(children)
 
   const textNodes = childArray.filter((child) => {
-    return !(isValidElement(child) && child.type === ul)
+    return !(isValidElement(child) && child.type === UL)
   })
 
   const subLists = childArray.filter((child) => {
-    return isValidElement(child) && child.type === ul
+    return isValidElement(child) && child.type === UL
   })
 
   return (
