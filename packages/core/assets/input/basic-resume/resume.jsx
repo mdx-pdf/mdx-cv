@@ -57,3 +57,35 @@ export function ResumeSkillItem({ category, skills }) {
     </View>
   )
 }
+
+export function ResumeExperience({ title, location, date, description, children }) {
+  return (
+    <View>
+      <View>
+        <View
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
+        >
+          <H4>{title}</H4>
+          <Text>{location}</Text>
+        </View>
+        <View
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
+        >
+          <Text>{description}</Text>
+          <Text>{date}</Text>
+        </View>
+      </View>
+      <View>{children}</View>
+    </View>
+  )
+}

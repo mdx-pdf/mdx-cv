@@ -1,4 +1,4 @@
-import { Resume, ResumeSkillItem } from "./resume";
+import { Resume, ResumeSkillItem, ResumeExperience } from "./resume";
 
 <Resume />
 
@@ -13,27 +13,19 @@ import { Resume, ResumeSkillItem } from "./resume";
 
 ## Experience
 
-**Company Name** — Role
-Description of what you did.
-
-- Achievement one
-- Achievement two
-  - sub-achievement one
-  - sub-achievement two
-
-**Company Name** — Role
-Description of what you did.
-
-- Achievement one
-- Achievement two
+<ResumeExperience
+  title="Software Engineer"
+  location="San Francisco, CA"
+  date="2020 - Present"
+  description="Developed and maintained web applications using React and Node.js."
+>
+  - Achievement one
+  - Achievement two
+    - sub-achievement one
+    - sub-achievement two
+</ResumeExperience>
 
 ## Education
 
 **School Name** — Degree
 Description of what you studied.
-
-## Skills
-
-- Skill one
-- Skill two
-- Skill three
