@@ -89,9 +89,15 @@ async function renderReactComponentToHtml(
     </StyleProvider>,
   )
   const collectedCss = collector.toString()
-  const htmlFragment = collectedCss
-    ? `<style>${convertCssToRphCss(collectedCss)}</style>${bodyHtml}`
-    : bodyHtml
+  let htmlFragment = bodyHtml
+  if (collectedCss) {
+    const { warnings, css } = convertCssToRphCss(collectedCss)
+    console.warn('=== CSS Conversion Warnings ===')
+    /* biome-ignore lint/suspicious/useIterableCallbackReturn: just log */
+    warnings.forEach((w) => console.warn(w))
+    htmlFragment = `<style>${css}</style>${bodyHtml}`
+  }
+
   const htmlDocument = createHtmlDocument(htmlFragment, options)
   console.log('Rendered html size: ', htmlDocument.length)
   if (options?.filedebug) {
