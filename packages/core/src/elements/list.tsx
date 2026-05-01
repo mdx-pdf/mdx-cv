@@ -21,11 +21,11 @@ export function ListItem({ children }: { children: ReactNode }) {
   const childArray = Children.toArray(children)
 
   const textNodes = childArray.filter((child) => {
-    return !(isValidElement(child) && child.type === UL)
+    return !(isValidElement(child) && (child.type === UL || child.type === OL))
   })
 
   const subLists = childArray.filter((child) => {
-    return isValidElement(child) && child.type === UL
+    return isValidElement(child) && (child.type === UL || child.type === OL)
   })
 
   return (
