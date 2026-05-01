@@ -59,7 +59,7 @@ async function renderMdxToPdf(mdxJsCode: string, inputPath: string) {
   return outputPath
 }
 
-export async function main(input: string) {
+async function main(input: string) {
   const content = await readFile(input, 'utf-8')
 
   const reactContent = await convertMdxToReact(content)
