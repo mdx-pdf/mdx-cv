@@ -2,7 +2,7 @@ export const VALID_UNITS = ['pt', 'in', 'mm', 'cm', '%', 'vw', 'vh'] as const
 
 export type ValidUnit = (typeof VALID_UNITS)[number]
 
-const VALID_CSS_PROPERTIES_BY_CATEGORY = {
+const VALID_REACT_PDF_CSS_PROPERTIES_BY_CATEGORY = {
   flexbox: [
     'alignContent',
     'alignItems',
@@ -109,7 +109,17 @@ const VALID_CSS_PROPERTIES_BY_CATEGORY = {
   ],
 }
 
-const VALID_CSS_PROPERTIES = Object.values(VALID_CSS_PROPERTIES_BY_CATEGORY).flat()
+const VALID_REACT_PDF_HTML_CSS_PROPERTIES = [
+  'borderCollapse',
+  'borderSpacing',
+  'listStyle',
+  'listStyleType',
+] as const
+
+const VALID_CSS_PROPERTIES = [
+  ...Object.values(VALID_REACT_PDF_CSS_PROPERTIES_BY_CATEGORY).flat(),
+  ...VALID_REACT_PDF_HTML_CSS_PROPERTIES,
+] as const
 
 export function isValidCssProperty(
   property: string,
