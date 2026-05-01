@@ -36,6 +36,7 @@ export function convertCssToRphCss(
 
   const checkResult = checkCss(css)
   const unsupportedPropSet = new Set(checkResult.unsupportedProperties)
+  const unsupportedValueSet = new Set(checkResult.unsupportedValues)
 
   for (const prop of checkResult.unsupportedProperties) {
     warnings.push(`Skipped unsupported property: "${prop}"`)
@@ -53,6 +54,19 @@ export function convertCssToRphCss(
     if (unsupportedPropSet.has(cssProp)) {
       decl.remove()
       return
+    }
+
+    // Skip declarations whose value was flagged as unsupported
+    const declKey = `${cssProp}: ${decl.value.trim()}`
+    if (unsupportedValueSet.has(declKey)) {
+      decl.remove()
+      return
+    }
+
+    // font-size with % causes NaN in react-pdf-html (no inherited context)
+    if (camelProp === 'fontSize' && /^\d+%$/.test(decl.value.trim())) {
+      const pct = Number.parseFloat(decl.value.trim())
+      decl.value = `${round((pct / 100) * baseFontSize)}pt`
     }
 
     decl.value = convertValue(camelProp, decl.value.trim(), baseFontSize, warnings)
@@ -135,9 +149,6 @@ if (import.meta.main) {
     console.log('=== Warnings ===')
     /* biome-ignore lint/suspicious/useIterableCallbackReturn: just log */
     result.warnings.forEach((w) => console.log(w))
-    console.log()
-    console.log('=== CSS ===')
-    console.log(result.css)
   }
   cli()
 }
