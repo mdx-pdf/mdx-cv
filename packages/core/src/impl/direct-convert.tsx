@@ -5,6 +5,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { compile } from '@mdx-js/mdx'
 import { MDXProvider } from '@mdx-js/react'
 import { Document, Font, Page, renderToFile } from '@react-pdf/renderer'
+import { Command } from 'commander'
 import type { ReactElement } from 'react'
 
 import { ReactPDFComponentMap as MdElementMap } from '../lib/MdElementMap.js'
@@ -70,23 +71,20 @@ export async function main(input: string) {
   console.log('Rendered PDF: ', pdfPath)
 }
 
-if (import.meta.main) {
-  const { program } = await import('commander')
+export const render = new Command('render')
 
-  program
-    .option('-f, --filedebug', 'output intermediate files for debugging')
-    .option('-o, --output <output>', 'path to the output file')
-    .option('-l, --lang <lang>', 'language of the document, e.g. "en" or "zh-CN"')
-    .argument('<input>', 'path to the input MDX file')
-    .action(async (input, options) => {
-      const inputDir = dirname(input)
-      options.outputDir =
-        options.output ??
-        (inputDir.includes(join('assets', 'input'))
-          ? join(__dirname, '..', '..', 'assets', 'output')
-          : inputDir)
+render
+  .option('-f, --filedebug', 'output intermediate files for debugging')
+  .option('-o, --output <output>', 'path to the output file')
+  .option('-l, --lang <lang>', 'language of the document, e.g. "en" or "zh-CN"')
+  .argument('<input>', 'path to the input MDX file')
+  .action(async (input, options) => {
+    const inputDir = dirname(input)
+    options.outputDir =
+      options.output ??
+      (inputDir.includes(join('assets', 'input'))
+        ? join(__dirname, '..', '..', 'assets', 'output')
+        : inputDir)
 
-      await main(input)
-    })
-    .parseAsync()
-}
+    await main(input)
+  })

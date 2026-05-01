@@ -1,5 +1,8 @@
-import { main } from './impl/direct-convert.js'
+import { program } from 'commander'
+import { render } from './impl/direct-convert.js'
 
-console.log(
-  'This is a CLI tool for converting MDX to PDF. Please run "mdx-cv --help" for usage instructions.',
-)
+program.addCommand(render)
+
+if (import.meta.main) {
+  program.parseAsync()
+}
