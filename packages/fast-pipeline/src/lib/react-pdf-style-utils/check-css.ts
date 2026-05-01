@@ -2,7 +2,7 @@ import postcss from 'postcss'
 import { toCamelCase } from '../../shared/index.js'
 import { isValidCssProperty, VALID_UNITS } from '../../shared/react-pdf-style.js'
 
-export interface CheckCssResult {
+interface CheckCssResult {
   unsupportedProperties: string[]
   unsupportedValues: string[]
 }

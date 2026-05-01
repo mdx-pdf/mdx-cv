@@ -2,12 +2,12 @@ import postcss from 'postcss'
 import { toCamelCase } from '../../shared/index.js'
 import { checkCss } from './check-css.js'
 
-export interface RphStyleConvertOptions {
+interface RphStyleConvertOptions {
   /** Base font size in pt, used for em→pt conversion. Default: 10 */
   baseFontSize?: number
 }
 
-export interface RphStyleConvertResult {
+interface RphStyleConvertResult {
   /** Converted CSS string (kebab-case properties, values compatible with react-pdf) */
   css: string
   /** Warnings for skipped properties and converted units */

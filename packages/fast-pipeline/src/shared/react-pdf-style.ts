@@ -1,7 +1,5 @@
 export const VALID_UNITS = ['pt', 'in', 'mm', 'cm', '%', 'vw', 'vh'] as const
 
-export type ValidUnit = (typeof VALID_UNITS)[number]
-
 const VALID_REACT_PDF_CSS_PROPERTIES_BY_CATEGORY = {
   flexbox: [
     'alignContent',
