@@ -11,4 +11,4 @@ node_modules
 # Outputs
 dist
 output/
-output.*
+*output.*

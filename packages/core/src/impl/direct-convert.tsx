@@ -1,6 +1,6 @@
 /** WIP: Direct Convert MDX to React-PDF Tree, then output PDF */
 import { readFile, unlink, writeFile } from 'node:fs/promises'
-import { dirname, join } from 'node:path'
+import { basename, dirname, extname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { compile } from '@mdx-js/mdx'
 import { MDXProvider } from '@mdx-js/react'
@@ -24,25 +24,28 @@ async function convertMdxToReact(mdxContent: string) {
   return String(result).replaceAll('"\\n"', 'null')
 }
 
-async function loadMdxComponent(mdxJsCode: string, inputPath: string) {
-  const tempModulePath = join(dirname(inputPath), `.temp_mdx_${Date.now()}.mjs`)
+async function loadMdxComponent(mdxJsCode: string, input: string, options: Option) {
+  const tempModulePath = join(dirname(input), `.temp_mdx_${Date.now()}.mjs`)
 
   try {
     await writeFile(tempModulePath, mdxJsCode, 'utf-8')
     const module = await import(pathToFileURL(tempModulePath).href)
     return module.default as (props: { components?: Record<string, unknown> }) => ReactElement
   } finally {
-    unlink(tempModulePath).catch((err) => {
-      if (err.code !== 'ENOENT') {
-        console.error('Failed to delete temp module file:', tempModulePath, err)
-      }
-    })
+    if (!options.filedebug) {
+      unlink(tempModulePath).catch((err) => {
+        if (err.code !== 'ENOENT') {
+          console.error('Failed to delete temp module file:', tempModulePath, err)
+        }
+      })
+    }
   }
 }
 
-async function renderMdxToPdf(mdxJsCode: string, inputPath: string, options: Option) {
-  const MDXContent = await loadMdxComponent(mdxJsCode, inputPath)
-  const outputPath = join(options.outputDir, 'output.pdf')
+async function renderMdxToPdf(mdxJsCode: string, input: string, options: Option) {
+  const inputFileName = basename(input, extname(input))
+  const MDXContent = await loadMdxComponent(mdxJsCode, input, options)
+  const outputPath = join(options.outputDir, `${inputFileName}.output.pdf`)
 
   const document = (
     <Document>
@@ -63,15 +66,17 @@ interface Option {
   filedebug?: boolean
   outputDir: string
   lang?: string
-  resetCss?: boolean
 }
 async function main(input: string, options: Option) {
+  const inputFileName = basename(input, extname(input))
   const content = await readFile(input, 'utf-8')
 
   const reactContent = await convertMdxToReact(content)
 
-  await writeFile(join(options.outputDir, 'output.jsx'), reactContent, 'utf-8')
-  console.log('Generated JSX at: ', options.outputDir)
+  if (options.filedebug) {
+    await writeFile(join(options.outputDir, `${inputFileName}.output.jsx`), reactContent, 'utf-8')
+    console.log('Generated JSX at: ', options.outputDir)
+  }
 
   const pdfPath = await renderMdxToPdf(reactContent, input, options)
   console.log('Rendered PDF: ', pdfPath)
@@ -81,7 +86,10 @@ export const render = new Command('render')
 
 render
   .option('-f, --filedebug', 'output intermediate files for debugging')
-  .option('-o, --output <output>', 'path to the output file')
+  .option(
+    '-o, --output <output>',
+    'path to the output file, if not specified, output to the same directory as input',
+  )
   .option('-l, --lang <lang>', 'language of the document, e.g. "en" or "zh-CN"')
   .argument('<input>', 'path to the input MDX file')
   .action(async (input, options) => {
