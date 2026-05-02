@@ -1,6 +1,6 @@
 import { run } from '@mdx-js/mdx'
 import { useMDXComponents } from '@mdx-js/react'
-import type { ReactElement } from 'react'
+import type React from 'react'
 import * as runtime from 'react/jsx-runtime'
 
 // baseUrl tells run() how to resolve relative imports inside the compiled MDX
@@ -13,5 +13,5 @@ export async function loadJsx(jsx: string, baseUrl: URL) {
     useMDXComponents,
     baseUrl,
   })
-  return MDXComponent as (props: { components?: Record<string, unknown> }) => ReactElement
+  return MDXComponent as React.ComponentType<Record<string, never>>
 }

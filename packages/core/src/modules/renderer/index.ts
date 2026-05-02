@@ -8,15 +8,28 @@ export type RendererOptions = Omit<WrapProps, 'children'> & {
   lang?: string
 }
 
-// mdx: MDX source string
-// baseUrl: file:// URL of the MDX file (used to resolve relative imports inside MDX)
-export async function basicRenderer(mdx: string, baseUrl: URL, options: RendererOptions = {}) {
-  const jsx = await mdxToJsx(mdx)
-  if (options.debugfile) {
-    const { writeFile } = await import('node:fs/promises')
-    await writeFile('output.debug.jsx', jsx)
-  }
-  const MDXComponent = await loadJsx(jsx, baseUrl)
+interface IRenderer {
+  renderToPdf(): Promise<NodeJS.ReadableStream>
+}
 
-  return renderMdxToPdf(MDXComponent, options)
+export class Renderer implements IRenderer {
+  constructor(
+    private readonly mdx: string,
+    private readonly baseUrl: URL,
+    private readonly options: RendererOptions = {},
+  ) {}
+
+  async renderToPdf(): Promise<NodeJS.ReadableStream> {
+    const jsx = await mdxToJsx(this.mdx)
+    if (this.options.debugfile) {
+      const { writeFile } = await import('node:fs/promises')
+      await writeFile('output.debug.jsx', jsx)
+    }
+    const MDXComponent = await loadJsx(jsx, this.baseUrl)
+    return renderMdxToPdf(MDXComponent, this.options)
+  }
+}
+
+export function basicRenderer(mdx: string, baseUrl: URL, options: RendererOptions = {}) {
+  return new Renderer(mdx, baseUrl, options).renderToPdf()
 }

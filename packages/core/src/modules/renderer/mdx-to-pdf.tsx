@@ -5,7 +5,7 @@ import { Wrap, type WrapProps } from './Wrap.js'
 
 type PDFRenderOptions = Omit<WrapProps, 'children'>
 export async function renderMdxToPdf(
-  MDXComponent: React.ComponentType<any>,
+  MDXComponent: React.ComponentType<Record<string, never>>,
   options: PDFRenderOptions,
 ) {
   const props = {

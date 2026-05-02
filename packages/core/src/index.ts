@@ -1,6 +1,6 @@
-import { basicRenderer } from './modules/renderer/index.js'
+import { basicRenderer, Renderer, type RendererOptions } from './modules/renderer/index.js'
 
-export { basicRenderer }
+export { basicRenderer, Renderer, type RendererOptions }
 
 if (import.meta.main) {
   async function cli() {
