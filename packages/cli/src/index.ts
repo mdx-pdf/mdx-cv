@@ -12,6 +12,6 @@ program
   .description('A CLI tool for generating PDF resumes from MDX files.')
   .version(version)
 
-program.addCommand(render).addCommand(init)
+program.addCommand(init).addCommand(render)
 
 await program.parseAsync()
