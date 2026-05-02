@@ -10,15 +10,11 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
-    },
-    "./render": {
-      "types": "./dist/render.d.ts",
-      "default": "./dist/render.js"
     }
   },
   "scripts": {
+    "start": "tsx src/index.ts",
     "build": "pkgroll --clean-dist",
-    "start": "tsx src/index.tsx",
     "clean": "rm -f assets/output/*",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
