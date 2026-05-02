@@ -15,6 +15,6 @@ This is a test of MDX to JSX conversion.
 
     const result = await mdxToJsx(input)
 
-    expect(result).toContain('Hello MDX')
+    expect(result).toMatchSnapshot()
   })
 })
