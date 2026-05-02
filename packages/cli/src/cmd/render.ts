@@ -1,6 +1,6 @@
 import { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { main as renderMDX } from '@mdx-cv/core/render'
+import { render as renderMDX } from '@mdx-cv/core'
 import { Font } from '@react-pdf/renderer'
 import { Command } from 'commander'
 
