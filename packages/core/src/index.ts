@@ -22,7 +22,7 @@ if (import.meta.main) {
     const mdx = await readFile(absInput, 'utf-8')
 
     const stream = await basicRenderer(mdx, pathToFileURL(absInput), {
-      debugfile: true,
+      debugfile: false,
     })
 
     const out = createWriteStream(outputPath)

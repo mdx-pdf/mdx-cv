@@ -1,9 +1,8 @@
 /* @jsxRuntime automatic */
 import { Text, View } from '@react-pdf/renderer'
 import type { ReactNode } from 'react'
-import { Children, isValidElement } from 'react'
 
-import { stripWhitespaceNodes } from './utils.js'
+import { markAsBlock, renderMixed, stripWhitespaceNodes } from './utils.js'
 
 export function List({ children }: { children: ReactNode }) {
   return (
@@ -14,25 +13,36 @@ export function List({ children }: { children: ReactNode }) {
 }
 
 export const UL = ({ children }: { children: ReactNode }) => <List>{children}</List>
-UL.displayName = 'ul'
 export const OL = ({ children }: { children: ReactNode }) => <List>{children}</List>
-OL.displayName = 'ol'
+
+// Register as block-level so renderMixed routes them outside <Text>
+markAsBlock(UL)
+markAsBlock(OL)
 
 export function ListItem({ children }: { children: ReactNode }) {
-  const childArray = Children.toArray(children)
-
-  const textNodes = childArray.filter((child) => {
-    return !(isValidElement(child) && (child.type === UL || child.type === OL))
-  })
-
-  const subLists = childArray.filter((child) => {
-    return isValidElement(child) && (child.type === UL || child.type === OL)
-  })
+  // renderMixed separates inline nodes (→ <Text>) from block nodes (→ direct),
+  // handling any nesting depth without explicit type checks.
+  const [first, ...rest] = renderMixed(children)
 
   return (
     <View style={{ border: '1px dashed blue', margin: 2, padding: 1 }}>
-      <Text>&middot; {textNodes}</Text>
-      {subLists}
+      {/* Prepend bullet to the first segment (always a <Text> from renderMixed) */}
+      <Text>
+        &middot;{' '}
+        {isRPText(first)
+          ? (first as React.ReactElement<{ children: ReactNode }>).props.children
+          : first}
+      </Text>
+      {rest}
     </View>
+  )
+}
+
+function isRPText(node: ReactNode): node is React.ReactElement {
+  return (
+    typeof node === 'object' &&
+    node !== null &&
+    'type' in node &&
+    (node as React.ReactElement).type === Text
   )
 }

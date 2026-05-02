@@ -11,6 +11,7 @@ export async function renderMdxToPdf(
   const props = {
     lang: options.lang,
     pageSize: options.pageSize,
+    baseUrl: options.baseUrl,
     components: ElementMap,
   }
 

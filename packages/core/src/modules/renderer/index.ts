@@ -26,7 +26,7 @@ export class Renderer implements IRenderer {
       await writeFile('output.debug.jsx', jsx)
     }
     const MDXComponent = await loadJsx(jsx, this.baseUrl)
-    return renderMdxToPdf(MDXComponent, this.options)
+    return renderMdxToPdf(MDXComponent, { ...this.options, baseUrl: this.baseUrl })
   }
 }
 
