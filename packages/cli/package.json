@@ -11,7 +11,7 @@
     "build": "pkgroll --clean-dist"
   },
   "bin": {
-    "mdx-cv": "./dist/index.js"
+    "mdxcv": "./dist/index.js"
   },
   "dependencies": {
     "@mdx-cv/core": "workspace:*",
