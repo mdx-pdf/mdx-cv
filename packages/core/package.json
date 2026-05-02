@@ -20,8 +20,8 @@
     "build": "pkgroll --clean-dist",
     "start": "tsx src/index.tsx",
     "clean": "rm -f assets/output/*",
-    "validate:css-converter": "tsx examples/convert-css-to-react-pdf.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@mdx-js/mdx": "^3.1.1",
