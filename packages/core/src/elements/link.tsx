@@ -1,3 +1,4 @@
+/* @jsxRuntime automatic */
 import { Link } from '@react-pdf/renderer'
 import type { ReactNode } from 'react'
 

@@ -1,21 +1,16 @@
 /** WIP: Direct Convert MDX to React-PDF Tree, then output PDF */
+/* @jsxRuntime automatic */
 import { readFile, unlink, writeFile } from 'node:fs/promises'
 import { basename, dirname, extname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { compile } from '@mdx-js/mdx'
 import { MDXProvider } from '@mdx-js/react'
-import { Document, Font, Page, renderToFile } from '@react-pdf/renderer'
-import { Command } from 'commander'
+import { Document, Page, renderToFile } from '@react-pdf/renderer'
 import type { ReactElement } from 'react'
 
 import { ElementMap } from '../elements/index.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-
-Font.register({
-  family: 'Noto Sans SC',
-  src: fileURLToPath(new URL('../../assets/input/NotoSansSC-Regular.ttf', import.meta.url)),
-})
 
 async function convertMdxToReact(mdxContent: string) {
   const result = await compile(mdxContent, {
@@ -25,7 +20,9 @@ async function convertMdxToReact(mdxContent: string) {
 }
 
 async function loadMdxComponent(mdxJsCode: string, input: string, options: Option) {
-  const tempModulePath = join(dirname(input), `.temp_mdx_${Date.now()}.mjs`)
+  // Write the temp file next to this module (inside core package) so that Node.js
+  // can resolve bare imports like "react" via core's node_modules.
+  const tempModulePath = join(__dirname, `.temp_mdx_${Date.now()}.mjs`)
 
   try {
     await writeFile(tempModulePath, mdxJsCode, 'utf-8')
@@ -62,12 +59,12 @@ async function renderMdxToPdf(mdxJsCode: string, input: string, options: Option)
   return outputPath
 }
 
-interface Option {
+export interface Option {
   filedebug?: boolean
   outputDir: string
   lang?: string
 }
-async function main(input: string, options: Option) {
+export async function main(input: string, options: Option) {
   const inputFileName = basename(input, extname(input))
   const content = await readFile(input, 'utf-8')
 
@@ -81,20 +78,3 @@ async function main(input: string, options: Option) {
   const pdfPath = await renderMdxToPdf(reactContent, input, options)
   console.log('Rendered PDF: ', pdfPath)
 }
-
-export const render = new Command('render')
-
-render
-  .option('-f, --filedebug', 'output intermediate files for debugging')
-  .option(
-    '-o, --output <output>',
-    'path to the output file, if not specified, output to the same directory as input',
-  )
-  .option('-l, --lang <lang>', 'language of the document, e.g. "en" or "zh-CN"')
-  .argument('<input>', 'path to the input MDX file')
-  .action(async (input, options) => {
-    const inputDir = dirname(input)
-    options.outputDir = options.output ?? inputDir
-
-    await main(input, options)
-  })

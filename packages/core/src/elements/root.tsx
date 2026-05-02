@@ -1,3 +1,4 @@
+/* @jsxRuntime automatic */
 import { View } from '@react-pdf/renderer'
 import type { ReactNode } from 'react'
 
