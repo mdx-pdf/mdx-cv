@@ -1,11 +1,14 @@
 {
   "name": "@mdx-cv/cli",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "",
   "keywords": [],
   "author": "Zeadust",
   "license": "MIT",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "start": "tsx src/index.ts",
     "build": "pkgroll --clean-dist"
