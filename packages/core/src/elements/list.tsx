@@ -70,18 +70,14 @@ function isRPText(node: ReactNode): node is React.ReactElement {
   )
 }
 
+// Only assign sequential indices to DIRECT ListItem children of this OL.
+// Nested OL components are not ListItem, so they pass through unchanged and
+// will call their own injectOrderedIndex with a fresh counter when they render.
 function injectOrderedIndex(children: ReactNode): ReactNode {
-  let index = 0
-  return Children.map(children, (child) => {
-    if (!isValidElement(child)) {
-      return child
-    }
-
-    if (child.type === ListItem) {
-      index += 1
-      return cloneElement(child as React.ReactElement<ListItemProps>, { listIndex: index })
-    }
-
-    return child
-  })
+  let i = 0
+  return Children.map(children, (child) =>
+    isValidElement(child) && child.type === ListItem
+      ? cloneElement(child as React.ReactElement<ListItemProps>, { listIndex: ++i })
+      : child,
+  )
 }
