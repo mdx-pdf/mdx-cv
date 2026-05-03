@@ -2,19 +2,25 @@
 import { StyleSheet, Text, View } from '@react-pdf/renderer'
 import type { ReactNode } from 'react'
 
+import { markAsBlock } from './utils.js'
+
 const defaultStyle = StyleSheet.create({
   blockquote: {
-    fontSize: 8,
-    marginBottom: 8,
+    fontSize: 10,
     borderLeft: '2px solid #ccc',
-    paddingLeft: 8,
+    marginBottom: 8,
+    paddingLeft: 10,
+  },
+  debug: {
+    // border: '1px solid red',
   },
 })
 
 export function Blockquote({ children }: { children: ReactNode }) {
   return (
     <View>
-      <Text style={defaultStyle.blockquote}>{children}</Text>
+      <Text style={[defaultStyle.blockquote, defaultStyle.debug]}>{children}</Text>
     </View>
   )
 }
+markAsBlock(Blockquote)

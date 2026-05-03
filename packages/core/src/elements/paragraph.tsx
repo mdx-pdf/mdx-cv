@@ -2,14 +2,18 @@
 import { StyleSheet, Text, View } from '@react-pdf/renderer'
 import type { ReactNode } from 'react'
 import { isValidElement } from 'react'
+
 import { renderMixed } from './utils.js'
 
 const defaultStyle = StyleSheet.create({
   paragraph: {
-    padding: 1,
-    fontSize: 8,
-    marginBottom: 8,
-    border: '1px solid blue',
+    fontSize: 10,
+    marginVertical: 5,
+    // lineHeight: 1.6,
+  },
+  text: {},
+  debug: {
+    border: '1px solid red',
   },
 })
 
@@ -20,11 +24,11 @@ export function Paragraph({ children }: { children: ReactNode }) {
     const [only] = mixed
     if (isValidElement<{ children: ReactNode }>(only) && only.type === Text) {
       return (
-        <View>
-          <Text style={defaultStyle.paragraph}>{only.props.children}</Text>
+        <View style={defaultStyle.paragraph}>
+          <Text style={[defaultStyle.text, defaultStyle.debug]}>{only.props.children}</Text>
         </View>
       )
     }
   }
-  return <View style={{ border: '1px solid green' }}>{mixed}</View>
+  return <View style={defaultStyle.paragraph}>{mixed}</View>
 }

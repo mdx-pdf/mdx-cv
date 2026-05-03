@@ -1,12 +1,18 @@
 /* @jsxRuntime automatic */
-import { Text, View } from '@react-pdf/renderer'
+import { StyleSheet, Text, View } from '@react-pdf/renderer'
 import type { ReactNode } from 'react'
 
+const defaultStyle = StyleSheet.create({
+  heading: {
+    fontWeight: 'bold',
+  },
+})
+
 export function Heading({ children, depth = 1 }: { children: ReactNode; depth?: number }) {
-  const fontSize = 24 - (depth - 1) * 3
+  const fontSize = 24 - (depth - 1) * 2
   return (
     <View>
-      <Text style={{ fontSize, fontWeight: 'bold' }}>{children}</Text>
+      <Text style={[defaultStyle.heading, { fontSize }]}>{children}</Text>
     </View>
   )
 }
